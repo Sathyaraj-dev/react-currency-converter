@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
+// const API_KEY = process.env.REACT_APP_CURRENCY_API_KEY
 const API_KEY = 'd738c009661fb1ebb3b5f070d8048f92'
 
 function App() {
@@ -22,12 +23,23 @@ function App() {
   }, [])
 
   const handleConvert = async () => {
-    const response = await fetch(
-      `https://api.currencylayer.com/convert?access_key=${API_KEY}&from=${from}&to=${to}&amount=${amount}`
-    )
-    const data = await response.json()
-    console.log(data)
-    setResult(data.result)
+    try {
+      const response = await fetch(
+        `https://api.currencylayer.com/convert?access_key=${API_KEY}&from=${from}&to=${to}&amount=${amount}`
+      )
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      const data = await response.json()
+      console.log(data)
+      if (data.success === false || typeof data.result === 'undefined') {
+        throw new Error(data.error?.info || 'Conversion failed')
+      }
+      setResult(data.result)
+    } catch (error) {
+      console.error(error)
+      setResult(`Error: ${error.message}`)
+    }
   }
 
   return (
@@ -49,7 +61,7 @@ function App() {
         <select id="to" value={to} onChange={(e) => setTo(e.target.value)}>
           {Object.entries(currencies).map(([code, name]) => (
             <option key={code} value={code}>
-              {name}
+          onChange={(e) => setAmount(Number(e.target.value))}
             </option>
           ))}
         </select>
