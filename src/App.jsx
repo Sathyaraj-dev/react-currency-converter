@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-// const API_KEY = process.env.REACT_APP_CURRENCY_API_KEY
-const API_KEY = 'd738c009661fb1ebb3b5f070d8048f92'
-
 function App() {
   const [currencies, setCurrencies] = useState({})
   const [from, setFrom] = useState('USD')
@@ -13,10 +10,9 @@ function App() {
 
   useEffect(() => {
     const getCurrencies = async () => {
-      const response = await fetch(`https://api.currencylayer.com/list?access_key=${API_KEY}`)
+      const response = await fetch(`https://api.frankfurter.dev/v1/latest`)
       const data = await response.json()
-      console.log(data)
-      setCurrencies(data.currencies || {})
+      setCurrencies({ [data.base]: 1, ...data.rates })
     }
 
     getCurrencies()
@@ -25,17 +21,21 @@ function App() {
   const handleConvert = async () => {
     try {
       const response = await fetch(
-        `https://api.currencylayer.com/convert?access_key=${API_KEY}&from=${from}&to=${to}&amount=${amount}`
+        `https://api.frankfurter.dev/v1/latest?base=${from}&symbols=${to}`
       )
       if (!response.ok) {
         throw new Error('Network response was not ok')
       }
+
       const data = await response.json()
       console.log(data)
-      if (data.success === false || typeof data.result === 'undefined') {
-        throw new Error(data.error?.info || 'Conversion failed')
+
+      const rate = data.rates[to]
+      if (!rate) {
+        throw new Error('Conversion rate not found')
       }
-      setResult(data.result)
+
+      setResult(rate * amount)
     } catch (error) {
       console.error(error)
       setResult(`Error: ${error.message}`)
@@ -45,48 +45,49 @@ function App() {
   return (
     <>
       <h1>Currency Converter</h1>
-      <div className='currency-container'>
-      <div className='currency-selector'>
-        <label htmlFor="from">From:</label>
-        <select id="from" value={from} onChange={(e) => setFrom(e.target.value)}>
-          {Object.entries(currencies).map(([code, name]) => (
-            <option key={code} value={code}>
-              {name}
-            </option>
-          ))}
-        </select>
+      <div className="currency-container">
+        <div className="currency-selector">
+          <label htmlFor="from">From:</label>
+          <select id="from" value={from} onChange={(e) => setFrom(e.target.value)}>
+            {Object.keys(currencies).map((code) => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="currency-selector">
+          <label htmlFor="to">To:</label>
+          <select id="to" value={to} onChange={(e) => setTo(e.target.value)}>
+            {Object.keys(currencies).map((code) => (
+              <option key={code} value={code}>
+                {code}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
-      <div className='currency-selector'>
-        <label htmlFor="to">To:</label>
-        <select id="to" value={to} onChange={(e) => setTo(e.target.value)}>
-          {Object.entries(currencies).map(([code, name]) => (
-            <option key={code} value={code}>
-          onChange={(e) => setAmount(Number(e.target.value))}
-            </option>
-          ))}
-        </select>
-      </div>
-      </div>
+
       <div>
         <label htmlFor="amount">Amount:</label>
         <input
           type="number"
           value={amount}
-          onChange={(e) => setAmount(e.target.value)}
+          onChange={(e) => setAmount(Number(e.target.value))}
           id="amount"
         />
       </div>
+
       <button onClick={handleConvert}>Convert</button>
 
-      
-        {result !== null && (
-          <div className='result'>
-            <p>
-              {amount} {from} = {result} {to}
-            </p>
-          </div>
-        )}
-      
+      {result !== null && (
+        <div className="result">
+          <p>
+            {amount} {from} = {result.toFixed(2)} {to}
+          </p>
+        </div>
+      )}
     </>
   )
 }
