@@ -12,14 +12,14 @@
 }
 
 input {
-  padding: 0.5rem;
+  padding: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
 }
 
 select {
-  padding: 0.5rem;
+  padding: 1rem 2rem;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 16px;
@@ -27,6 +27,25 @@ select {
 
 .currency-selector {
   margin: 0 0 1rem 0;
+}
+
+.currency-selector select {
+  font-size: 16px;     /* increase text size */
+}
+
+.currency-selector select::-ms-expand {
+  display: none; /* remove default arrow in IE */
+}
+
+.currency-selector select {
+  appearance: none;       /* remove default arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url("data:image/svg+xml;utf8,<svg fill='black' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+    no-repeat right 0.5rem center; /* custom arrow */
+  background-size: 20px;  /* arrow size */
+  background-color: white; /* background color */
+  width: 150px;
 }
 
 label {
@@ -46,6 +65,7 @@ button {
   color: white;
   cursor: pointer;
   font-size: 18px;
+  width: 230px;
 }
 
 .result {
