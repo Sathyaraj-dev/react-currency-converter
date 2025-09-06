@@ -1,4 +1,4 @@
-💱 React Currency Converter
+💱 **React Currency Converter**
 
 A simple and responsive Currency Converter built with React + Vite.
 This project allows users to convert currencies in real-time using exchange rate APIs.
@@ -7,7 +7,7 @@ This project allows users to convert currencies in real-time using exchange rate
 
 <br>
 
-🚀 Features
+🚀 **Features**
 
 🌍 Convert between multiple world currencies
 
@@ -21,7 +21,7 @@ This project allows users to convert currencies in real-time using exchange rate
 
 <br>
 
-🛠️ Tech Stack
+🛠️ **Tech Stack**
 
 React 18 – UI Library
 
